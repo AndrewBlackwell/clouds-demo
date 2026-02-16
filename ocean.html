@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ocean - Shader Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        background: #1a3a52;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+
+      #back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        z-index: 10;
+      }
+
+      #back-button:hover {
+        background: rgba(255, 255, 255, 1);
+      }
+
+      .placeholder {
+        text-align: center;
+        color: white;
+      }
+
+      .placeholder h1 {
+        font-size: 2em;
+        margin-bottom: 1em;
+      }
+
+      .placeholder p {
+        font-size: 1.1em;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="back-button">← Back</button>
+    <div class="placeholder">
+      <h1>🌊 Ocean</h1>
+      <p>Coming soon...</p>
+    </div>
+
+    <script>
+      document.getElementById("back-button").addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shader Demos</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+
+      .container {
+        text-align: center;
+        color: white;
+      }
+
+      h1 {
+        font-size: 3em;
+        margin-bottom: 1em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2em;
+        margin-top: 2em;
+        max-width: 800px;
+      }
+
+      .demo-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 2em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+      }
+
+      .demo-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .demo-card h2 {
+        font-size: 1.5em;
+        margin-bottom: 0.5em;
+      }
+
+      .demo-card p {
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Shader Demos</h1>
+      <div class="demo-grid">
+        <a href="clouds.html" class="demo-card">
+          <h2>☁️ Clouds</h2>
+          <p>Fluid, animated cloud patterns</p>
+        </a>
+        <a href="ocean.html" class="demo-card">
+          <h2>🌊 Ocean</h2>
+          <p>Coming soon...</p>
+        </a>
+        <a href="underwater.html" class="demo-card">
+          <h2>🐚 Underwater</h2>
+          <p>Coming soon...</p>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
