@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ocean demo</title>
+    <title>Clouds - Shader Demo</title>
     <style>
       * {
         margin: 0;
@@ -14,12 +14,13 @@
         width: 100%;
         height: 100vh;
         overflow: hidden;
-        background: #1a3a52;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #000;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
       }
 
       #back-button {
@@ -27,45 +28,148 @@
         top: 20px;
         left: 20px;
         padding: 10px 20px;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(0, 0, 0, 0.9);
         border: none;
         border-radius: 5px;
         cursor: pointer;
         font-size: 14px;
         z-index: 10;
+        color: rgb(255, 255, 255);
       }
 
       #back-button:hover {
-        background: rgba(255, 255, 255, 1);
-      }
-
-      .placeholder {
-        text-align: center;
-        color: white;
-      }
-
-      .placeholder h1 {
-        font-size: 2em;
-        margin-bottom: 1em;
-      }
-
-      .placeholder p {
-        font-size: 1.1em;
-        opacity: 0.8;
+        background: rgba(0, 0, 0, 1);
       }
     </style>
   </head>
   <body>
     <button id="back-button">← Back</button>
-    <div class="placeholder">
-      <h1>ocean</h1>
-      <p>not created yet</p>
-    </div>
+    <canvas id="canvas"></canvas>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
       document.getElementById("back-button").addEventListener("click", () => {
         window.location.href = "index.html";
       });
+
+      const vertexShader = `
+            varying vec2 vUv;
+
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+      const fragmentShader = `
+            uniform float iTime;
+            uniform vec3 iResolution;
+            uniform vec3 iMouse;
+
+            varying vec2 vUv;
+
+            #define N(a) abs(dot( sin( iTime + .1*p.z + .3*p/a) , vec3(a+a)) )
+
+            void mainImage( out vec4 o, vec2 u ) {
+                float s=.3,i,n;
+                vec3 r = iResolution,p;
+                for(u = (u-r.xy/2.)/r.y-s; i++ < 32. && ++s>.001;)
+                    for (p += vec3(u*s,s),s = p.y,
+                        n =.01; n < 1.;n+=n)
+                        s += abs(dot(sin(p.z + iTime + p/n),  r/r)) * n*.1;
+                o = tanh(i*vec4(0.5,0.75,1.5,1.0)/length(u-.1)/5e2);
+            }
+
+            void main() {
+                vec4 fragColor = vec4(0.0);
+                mainImage(fragColor, gl_FragCoord.xy);
+                gl_FragColor = fragColor;
+            }
+        `;
+
+      // Scene setup
+      const canvas = document.getElementById("canvas");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setClearColor(0x000000);
+
+      const scene = new THREE.Scene();
+
+      const dpr = window.devicePixelRatio;
+      const width = window.innerWidth * dpr;
+      const height = window.innerHeight * dpr;
+
+      const camera = new THREE.OrthographicCamera(
+        -width / 2,
+        width / 2,
+        height / 2,
+        -height / 2,
+        0.1,
+        1000,
+      );
+      camera.position.z = 1;
+
+      const uniforms = {
+        iTime: { value: 0.0 },
+        iResolution: {
+          value: new THREE.Vector3(width, height, 1.0),
+        },
+        iMouse: { value: new THREE.Vector3(0, 0, 1) },
+      };
+
+      // Shader material
+      const material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+      });
+
+      // Plane mesh
+      const geometry = new THREE.PlaneGeometry(width, height);
+      const plane = new THREE.Mesh(geometry, material);
+      scene.add(plane);
+
+      // Mouse tracking
+      const mouse = { x: 0, y: 0 };
+      window.addEventListener("mousemove", (event) => {
+        mouse.x = event.clientX * dpr;
+        mouse.y = (window.innerHeight - event.clientY) * dpr;
+        uniforms.iMouse.value.set(mouse.x, mouse.y, 1);
+      });
+
+      // Handle resize
+      window.addEventListener("resize", () => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        const newDpr = window.devicePixelRatio;
+        const dpWidth = newWidth * newDpr;
+        const dpHeight = newHeight * newDpr;
+
+        camera.left = -dpWidth / 2;
+        camera.right = dpWidth / 2;
+        camera.top = dpHeight / 2;
+        camera.bottom = -dpHeight / 2;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(newWidth, newHeight);
+        uniforms.iResolution.value.set(dpWidth, dpHeight, 1.0);
+
+        geometry.dispose();
+        const newGeometry = new THREE.PlaneGeometry(dpWidth, dpHeight);
+        plane.geometry = newGeometry;
+      });
+
+      // Animation loop
+      const startTime = Date.now();
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = (Date.now() - startTime) * 0.001;
+        uniforms.iTime.value = elapsed;
+        renderer.render(scene, camera);
+      }
+
+      animate();
     </script>
   </body>
 </html>
